@@ -87,7 +87,6 @@ let generations = 0
 
 const ui_callbacks = {
   genetic_code: {
-    name: function(value) { console.log('new name', value)},
     genes: function(value) { genetic_code = _parse_genes(value); _restart() },
     d_n_a: function(value) { dna = value; _restart() },
     angles: function(value) { angles = _parse_angles(value); _restart() },

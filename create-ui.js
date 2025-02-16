@@ -152,19 +152,31 @@ function _create_ui_select(name, values, callback, overall_ui, callbacks) {
     sub_ui = {}
     _create_ui_section(sub_ui, values[0], callbacks[name])
     labels = []
+
     _start_ui_line()
+
     _create_ui_button('Save ' + name, function() {
       const index = select.value()
-      console.log('selected', index)
-      console.log('previous value', values[index])
-      for (const [sub_name, sub_value] of Object.entries(values[index])) {
+      const value = values[index]
+      for (const [sub_name, sub_value] of Object.entries(value)) {
         const new_value = sub_ui[sub_name].value()
-        values[index][sub_name] = new_value
-        // callbacks[name][sub_name](new_value)
+        value[sub_name] = new_value
       }
-      console.log('new value', values[index])
     })
-    //_create_ui_button('Add ' + name)
+
+    _create_ui_button('Add ' + name, function() {
+      const index = select.value()
+      const entry = values[index]
+      const new_entry = {}
+      for (const [sub_name, sub_value] of Object.entries(entry)) {
+        const new_value = sub_ui[sub_name].value()
+        new_entry[sub_name] = new_value
+      }
+      const new_index = values.length
+      values.push(new_entry)
+      select.option(new_entry.name, new_index)
+      select.value(new_index)
+    })
 
     for (const value of values) {
       labels.push(value.name)
@@ -187,11 +199,11 @@ function _create_ui_select(name, values, callback, overall_ui, callbacks) {
   else if (is_object) {
     select.input(function() {
       const index = select.value()
-      console.log('selected', index)
-      console.log('found value', values[index])
       for (const [sub_name, sub_value] of Object.entries(values[index])) {
         sub_ui[sub_name].value(sub_value)
-        callbacks[name][sub_name](sub_value)
+        const sub_callback = callbacks[name][sub_name]
+        if (_is_function(sub_callback))
+          sub_callback(sub_value)
       }
     })
   }
