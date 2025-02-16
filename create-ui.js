@@ -4,7 +4,7 @@ let _ui_line_prev = undefined
 
 const _ui_pt_width = 350
 const _ui_button_pt_width = 60
-const _ui_label_pt_width = 100
+const _ui_label_pt_width = 60
 const _ui_overall_offset = 20
 const _ui_overall_pt_padding = 8
 
@@ -92,7 +92,7 @@ function _create_ui_header(name) {
 
 function _create_ui_label(name) {
   label = createSpan(_convert_to_label(name))
-  label.style(`width:${_ui_label_pt_width}pt`)
+  label.style(`min-width:${_ui_label_pt_width}pt;display: inline-block;`)
   return label
 }
 
@@ -102,7 +102,7 @@ function _create_ui_text(name, value, callback) {
   _add_ui_to_line(_create_ui_label(name), 'text')
   _add_separator_to_line()
   const input = _add_ui_to_line(createInput('' + value, 'text'))
-  input.style(`width:${_ui_pt_width - 160}pt`)
+  input.style(`width:${_ui_pt_width - 160}pt;`)
 
   if (_is_function(callback)) {
     input.input(function() {
@@ -123,7 +123,7 @@ function _create_ui_integer(name, value, callback) {
 
   if (_is_function(callback)) {
       input.input(function() {
-      callback(input.value())
+      callback(Number(input.value()))
     })
   }
 
@@ -152,8 +152,6 @@ function _create_ui_select(name, values, callback, overall_ui, callbacks) {
     sub_ui = {}
     _create_ui_section(sub_ui, values[0], callbacks[name])
     labels = []
-
-    _start_ui_line()
 
     _create_ui_button('Save ' + name, function() {
       const index = select.value()
@@ -300,7 +298,7 @@ function _convert_to_label(name) {
 }
 
 function _start_ui_line(elem_type) {
-  if (_ui_line_prev != undefined && _ui_line_prev == elem_type)
+  if (_ui_line_div != undefined && (_ui_line_prev == undefined || _ui_line_prev == elem_type))
     return
 
   _ui_line_div = createDiv()

@@ -3,6 +3,8 @@ let ui
 function setup() {
   createCanvas(600, 600)
   ui = create_ui(ui_values, ui_callbacks)
+  initial_x = width / 2
+  initial_y = height / 2
   _restart()
 }
 
@@ -15,7 +17,7 @@ function _run() {
 }
 
 function _restart() {
-  dna = ui_values.genetic_code[0].d_n_a
+  dna = initial_dna
   generations = 0
 }
 
@@ -42,11 +44,12 @@ let known_genetic_codes = [
 
 const ui_values = {
   genetic_code: known_genetic_codes,
-  movement: 8,
-  max_generations: 8,
-  pause: _pause,
-  run: _run,
-  restart: _restart,
+  evolution: {
+    generations: 8,
+    pause: _pause,
+    run: _run,
+    restart: _restart,
+  }
 }
 
 function _parse_genes(value) {
@@ -59,7 +62,7 @@ function _parse_genes(value) {
       genetic_code[from_to[0]] = from_to[1]
   }
 
-  console.log('genetic-code:', genetic_code)
+  // console.log('genetic-code:', genetic_code)
   return genetic_code
 }
 
@@ -74,25 +77,27 @@ function _parse_angles(value) {
     angles[genes[i]] = angle
   }
 
-  console.log('angles:', angles)
+  // console.log('angles:', angles)
   return angles
 }
 
 let is_paused = false
 let genetic_code = _parse_genes(ui_values.genetic_code[0].genes)
 let angles = _parse_angles(ui_values.genetic_code[0].angles)
-let dna = ui_values.genetic_code[0].d_n_a
+let initial_dna = ui_values.genetic_code[0].d_n_a
+let dna = initial_dna
 
 let generations = 0
 
 const ui_callbacks = {
   genetic_code: {
     genes: function(value) { genetic_code = _parse_genes(value); _restart() },
-    d_n_a: function(value) { dna = value; _restart() },
+    d_n_a: function(value) { initial_dna = value; _restart() },
     angles: function(value) { angles = _parse_angles(value); _restart() },
   },
-  movement: function(value) { ui_values.movement = value; _restart() },
-  max_generations: function(value) { ui_values.max_generations = value; _restart() },
+  evolution: {
+    generations: function(value) { ui_values.evolution.generations = value; _restart() },
+  }
 }
 
 function _evolve() {
@@ -109,28 +114,36 @@ function _evolve() {
 }
 
 function _draw_genes() {
-  let x = width / 2
-  let y = height / 2
+  let x = initial_x
+  let y = initial_y
   let heading = 0
   for (const gene of dna) {
     if (gene in angles)
       heading = (heading + angles[gene]) % 360
     rad_heading = heading * Math.PI / 180
-    const new_x = x + Math.cos(rad_heading) * ui_values.movement
-    const new_y = y + Math.sin(rad_heading) * ui_values.movement
+    const new_x = x + Math.cos(rad_heading) * movement
+    const new_y = y + Math.sin(rad_heading) * movement
     line(x, y, new_x, new_y)
     x = new_x
     y = new_y
   }
 }
 
+let _force_redraw = false
+
 function draw() {
   if (is_paused)
     return
 
-  background(0)
-  stroke(240)
-  if (generations++ < ui_values.max_generations)
+  if (generations++ < ui_values.evolution.generations) {
     _evolve()
-  _draw_genes()
+    _force_redraw = true
+  }
+
+  if (_force_redraw) {
+    background(0)
+    stroke(240)
+    _draw_genes()
+    _force_redraw = false
+  }
 }
