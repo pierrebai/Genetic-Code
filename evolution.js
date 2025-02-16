@@ -1,7 +1,6 @@
 class Evolution extends MultiStepsAlgo {
   constructor() {
     super()
-    this.generations = 0
     this.max_generations = ui_values.evolution.generations
     this.dna = initial_dna
     this.genetic_code = genetic_code
@@ -10,13 +9,14 @@ class Evolution extends MultiStepsAlgo {
 
   *run() {
     super.run()
-    while (this.generations++ < this.max_generations) {
+    generations = 0
+    while (++generations < this.max_generations) {
       let new_dna = ''
       if (this.dna != undefined) {
         let count = 0
         for (const gene of this.dna) {
           if (++count % 1000 == 0) {
-            yield `evolving ${Math.round(count * 100 / this.dna.length)}%`
+            yield `generation #${generations} evolving ${Math.round(count * 100 / this.dna.length)}%`
             if (this.stopped)
               return
           }
@@ -27,7 +27,7 @@ class Evolution extends MultiStepsAlgo {
         }
       }
       this.dna = new_dna
-      yield `evolved ${Math.round(this.generations * 100 / this.max_generations)})`
+      yield `generation #${generations})`
       if (this.stopped)
         return
       request_redraw()

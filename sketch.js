@@ -1,11 +1,16 @@
 let ui
 
 function setup() {
-  createCanvas(600, 600)
+  createCanvas(800, 800)
   ui = create_ui(ui_values, ui_callbacks)
+  _recenter()
+  _restart()
+}
+
+function _recenter() {
   initial_x = width / 2
   initial_y = height / 2
-  _restart()
+  request_redraw()
 }
 
 function _pause() {
@@ -65,6 +70,7 @@ const ui_values = {
     pause: _pause,
     run: _run,
     restart: _restart,
+    recenter: _recenter
   }
 }
 
@@ -89,7 +95,7 @@ function _parse_angles(value) {
 
   const genes = 'abcdefghijklmnopqrstuvwxyz'
   for (let i = 0; i < angle_texts.length; ++i) {
-    const angle = (360 + angle_texts[i]) % 360
+    const angle = (360 + Number(angle_texts[i])) % 360
     angles[genes[i]] = angle
   }
 
