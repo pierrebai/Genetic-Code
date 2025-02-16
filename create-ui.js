@@ -57,7 +57,7 @@ function _create_ui_section(overall_ui, values, callbacks) {
     }
     else if (_is_object(value)) {
       sub_ui = {}
-      _create_ui_header(name)
+      sub_ui.label = _create_ui_header(name)
       _create_ui_section(sub_ui, value, callbacks[name])
     }
 
@@ -87,7 +87,13 @@ function _is_function(value) {
 
 function _create_ui_header(name) {
   _start_ui_line()
-  _add_ui_to_line(createSpan(`<h3 style="font-size:14pt">${_convert_to_label(name)}</h3>`))
+  header = _add_ui_to_line(createSpan(''))
+  update_ui_header(header, _convert_to_label(name))
+  return header
+}
+
+function update_ui_header(header, text) {
+  header.html(`<h3 style="font-size:14pt">${_convert_to_label(text)}</h3>`)
 }
 
 function _create_ui_label(name) {
@@ -203,7 +209,7 @@ function _create_ui_select(name, values, callback, overall_ui, callbacks) {
 
   if (_is_function(callback)) {
     select.input(function() {
-      callback(select.selected())
+      callback(select.selected(), select.value())
     })
   }
   else if (is_object) {
@@ -276,21 +282,24 @@ function _convert_to_label(name) {
   // TODO: detect capitalization or underscore and add spaces, etc
   label = ''
   let next_upper = true
+  let was_upper = false
   for (let ch of name) {
     if (ch == '_' || ch == ' ') {
-      if (label.length > 0 && label[-1] != ' ')
+      if (label.length > 0 && label[-1] != ' ' && !was_upper)
         label += ' '
       next_upper = true
     }
     else {
-      if (ch.toUpperCase(ch) == ch) {
-        if (label.length > 0 && label[-1] != ' ')
+      if (ch.toLowerCase(ch) != ch) {
+        if (label.length > 0 && label[-1] != ' ' && !was_upper)
           label += ' '
+        next_upper = true
       }
       if (next_upper)
         label += ch.toUpperCase()
       else
         label += ch
+      was_upper = next_upper
       next_upper = false
     }
   }

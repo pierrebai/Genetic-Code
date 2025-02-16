@@ -19,6 +19,10 @@ function _run() {
 function _restart() {
   dna = initial_dna
   generations = 0
+  evolution = new Evolution()
+  stop_all_algorithms()
+  queue_algorithm(evolution)
+  _run()
 }
 
 let known_genetic_codes = [
@@ -38,7 +42,19 @@ let known_genetic_codes = [
     name: "Snowflake",
     genes: "a:aab b:aabc c:bb",
     d_n_a: "a",
-    angles: "0 60 120 180 -60 -120",
+    angles: "0 60 120",
+  },
+  {
+    name: "Twirly",
+    genes: "a:aab b:aabc c:dd",
+    d_n_a: "a",
+    angles: "0 60 120 120",
+  },
+  {
+    name: "Chaos",
+    genes: "a:abc b:azc c:bzdba",
+    d_n_a: "a",
+    angles: "0 60 120",
   },
 ]
 
@@ -85,9 +101,7 @@ let is_paused = false
 let genetic_code = _parse_genes(ui_values.genetic_code[0].genes)
 let angles = _parse_angles(ui_values.genetic_code[0].angles)
 let initial_dna = ui_values.genetic_code[0].d_n_a
-let dna = initial_dna
-
-let generations = 0
+let evolution = undefined
 
 const ui_callbacks = {
   genetic_code: {
@@ -100,50 +114,34 @@ const ui_callbacks = {
   }
 }
 
-function _evolve() {
-  let new_dna = ''
-  if (dna != undefined) {
-    for (const gene of dna) {
-      if (gene  in genetic_code) 
-        new_dna += genetic_code[gene]
-      else
-        new_dna += gene
-    }
-  }
-  dna = new_dna
-}
+let redraw_gen = undefined
 
-function _draw_genes() {
-  let x = initial_x
-  let y = initial_y
-  let heading = 0
-  for (const gene of dna) {
-    if (gene in angles)
-      heading = (heading + angles[gene]) % 360
-    rad_heading = heading * Math.PI / 180
-    const new_x = x + Math.cos(rad_heading) * movement
-    const new_y = y + Math.sin(rad_heading) * movement
-    line(x, y, new_x, new_y)
-    x = new_x
-    y = new_y
-  }
+function request_redraw() {
+  if (evolution == undefined)
+    return
+  redraw_gen = evolution.draw()
 }
-
-let _force_redraw = false
 
 function draw() {
   if (is_paused)
     return
 
-  if (generations++ < ui_values.evolution.generations) {
-    _evolve()
-    _force_redraw = true
-  }
+  if (!evolution)
+    return
 
-  if (_force_redraw) {
-    background(0)
-    stroke(240)
-    _draw_genes()
-    _force_redraw = false
+  progress = run_current_algorithm()
+  if (progress)
+    update_ui_header(ui.evolution.label, 'Evolution: ' + progress)
+  else
+    update_ui_header(ui.evolution.label, `Evolution: ${evolution.dna.length} DNA`)
+
+  if (redraw_gen) {
+    const max_interactive_draw = 10
+    let count = 0
+    while (!redraw_gen.next().done && count++ < max_interactive_draw) {}
+
+    if (redraw_gen.next().done) {
+      redraw_gen = undefined
+    }
   }
 }
