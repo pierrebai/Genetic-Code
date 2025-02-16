@@ -129,7 +129,7 @@ function draw() {
   if (!evolution)
     return
 
-  progress = run_current_algorithm()
+  progress = run_current_algorithm_at_fps()
   if (progress)
     update_ui_header(ui.evolution.label, 'Evolution: ' + progress)
   else
