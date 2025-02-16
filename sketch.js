@@ -113,15 +113,14 @@ function _draw_genes() {
   let y = height / 2
   let heading = 0
   for (const gene of dna) {
-    if (gene in angles) {
+    if (gene in angles)
       heading = (heading + angles[gene]) % 360
-      rad_heading = heading * Math.PI / 180
-      const new_x = x + Math.cos(rad_heading) * ui_values.movement
-      const new_y = y + Math.sin(rad_heading) * ui_values.movement
-      line(x, y, new_x, new_y)
-      x = new_x
-      y = new_y
-    }
+    rad_heading = heading * Math.PI / 180
+    const new_x = x + Math.cos(rad_heading) * ui_values.movement
+    const new_y = y + Math.sin(rad_heading) * ui_values.movement
+    line(x, y, new_x, new_y)
+    x = new_x
+    y = new_y
   }
 }
 

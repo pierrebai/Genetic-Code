@@ -173,6 +173,18 @@ function _create_ui_select(name, values, callback, overall_ui, callbacks) {
         new_entry[sub_name] = new_value
       }
       const new_index = values.length
+      let unique = false
+      let suffix = 2
+      while (!unique) {
+        unique = true
+        for (const value of values) {
+          if (value.name == new_entry.name) {
+            new_entry.name += ' #' + suffix
+            suffix += 1
+            unique = false
+          }
+        }
+      }
       values.push(new_entry)
       select.option(new_entry.name, new_index)
       select.value(new_index)
