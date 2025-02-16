@@ -4,7 +4,7 @@ let _ui_line_prev = undefined
 
 const _ui_pt_width = 350
 const _ui_button_pt_width = 60
-const _ui_label_pt_width = 100
+const _ui_label_pt_width = 60
 const _ui_overall_offset = 20
 const _ui_overall_pt_padding = 8
 
@@ -24,7 +24,7 @@ function _start_ui() {
   const offset = 20
   _ui_div = createDiv()
   _ui_div.position(width + _ui_overall_offset, _ui_overall_offset)
-  _ui_div.style('background:white')
+  _ui_div.style('background:#c8c8c8')
   _ui_div.style(`width:${_ui_pt_width}pt`)
   _ui_div.style(`height:${height - _ui_overall_offset * 2}px`)
   _ui_div.style(`padding:${_ui_overall_pt_padding}pt`)
@@ -57,7 +57,7 @@ function _create_ui_section(overall_ui, values, callbacks) {
     }
     else if (_is_object(value)) {
       sub_ui = {}
-      _create_ui_header(name)
+      sub_ui.label = _create_ui_header(name)
       _create_ui_section(sub_ui, value, callbacks[name])
     }
 
@@ -87,12 +87,18 @@ function _is_function(value) {
 
 function _create_ui_header(name) {
   _start_ui_line()
-  _add_ui_to_line(createSpan(`<h3 style="font-size:14pt">${_convert_to_label(name)}</h3>`))
+  header = _add_ui_to_line(createSpan(''))
+  update_ui_header(header, _convert_to_label(name))
+  return header
+}
+
+function update_ui_header(header, text) {
+  header.html(`<h3 style="font-size:14pt">${_convert_to_label(text)}</h3>`)
 }
 
 function _create_ui_label(name) {
   label = createSpan(_convert_to_label(name))
-  label.style(`width:${_ui_label_pt_width}pt`)
+  label.style(`min-width:${_ui_label_pt_width}pt;display: inline-block;`)
   return label
 }
 
@@ -102,7 +108,7 @@ function _create_ui_text(name, value, callback) {
   _add_ui_to_line(_create_ui_label(name), 'text')
   _add_separator_to_line()
   const input = _add_ui_to_line(createInput('' + value, 'text'))
-  input.style(`width:${_ui_pt_width - 160}pt`)
+  input.style(`width:${_ui_pt_width - 160}pt;`)
 
   if (_is_function(callback)) {
     input.input(function() {
@@ -123,7 +129,7 @@ function _create_ui_integer(name, value, callback) {
 
   if (_is_function(callback)) {
       input.input(function() {
-      callback(input.value())
+      callback(Number(input.value()))
     })
   }
 
@@ -152,19 +158,41 @@ function _create_ui_select(name, values, callback, overall_ui, callbacks) {
     sub_ui = {}
     _create_ui_section(sub_ui, values[0], callbacks[name])
     labels = []
-    _start_ui_line()
+
     _create_ui_button('Save ' + name, function() {
       const index = select.value()
-      console.log('selected', index)
-      console.log('previous value', values[index])
-      for (const [sub_name, sub_value] of Object.entries(values[index])) {
+      const value = values[index]
+      for (const [sub_name, sub_value] of Object.entries(value)) {
         const new_value = sub_ui[sub_name].value()
-        values[index][sub_name] = new_value
-        // callbacks[name][sub_name](new_value)
+        value[sub_name] = new_value
       }
-      console.log('new value', values[index])
     })
-    //_create_ui_button('Add ' + name)
+
+    _create_ui_button('Add ' + name, function() {
+      const index = select.value()
+      const entry = values[index]
+      const new_entry = {}
+      for (const [sub_name, sub_value] of Object.entries(entry)) {
+        const new_value = sub_ui[sub_name].value()
+        new_entry[sub_name] = new_value
+      }
+      const new_index = values.length
+      let unique = false
+      let suffix = 2
+      while (!unique) {
+        unique = true
+        for (const value of values) {
+          if (value.name == new_entry.name) {
+            new_entry.name += ' #' + suffix
+            suffix += 1
+            unique = false
+          }
+        }
+      }
+      values.push(new_entry)
+      select.option(new_entry.name, new_index)
+      select.value(new_index)
+    })
 
     for (const value of values) {
       labels.push(value.name)
@@ -181,17 +209,17 @@ function _create_ui_select(name, values, callback, overall_ui, callbacks) {
 
   if (_is_function(callback)) {
     select.input(function() {
-      callback(select.selected())
+      callback(select.selected(), select.value())
     })
   }
   else if (is_object) {
     select.input(function() {
       const index = select.value()
-      console.log('selected', index)
-      console.log('found value', values[index])
       for (const [sub_name, sub_value] of Object.entries(values[index])) {
         sub_ui[sub_name].value(sub_value)
-        callbacks[name][sub_name](sub_value)
+        const sub_callback = callbacks[name][sub_name]
+        if (_is_function(sub_callback))
+          sub_callback(sub_value)
       }
     })
   }
@@ -254,21 +282,24 @@ function _convert_to_label(name) {
   // TODO: detect capitalization or underscore and add spaces, etc
   label = ''
   let next_upper = true
+  let was_upper = false
   for (let ch of name) {
     if (ch == '_' || ch == ' ') {
-      if (label.length > 0 && label[-1] != ' ')
+      if (label.length > 0 && label[-1] != ' ' && !was_upper)
         label += ' '
       next_upper = true
     }
     else {
-      if (ch.toUpperCase(ch) == ch) {
-        if (label.length > 0 && label[-1] != ' ')
+      if (ch.toLowerCase(ch) != ch) {
+        if (label.length > 0 && label[-1] != ' ' && !was_upper)
           label += ' '
+        next_upper = true
       }
       if (next_upper)
         label += ch.toUpperCase()
       else
         label += ch
+      was_upper = next_upper
       next_upper = false
     }
   }
@@ -276,7 +307,7 @@ function _convert_to_label(name) {
 }
 
 function _start_ui_line(elem_type) {
-  if (_ui_line_prev != undefined && _ui_line_prev == elem_type)
+  if (_ui_line_div != undefined && (_ui_line_prev == undefined || _ui_line_prev == elem_type))
     return
 
   _ui_line_div = createDiv()
