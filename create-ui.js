@@ -24,7 +24,7 @@ function _start_ui() {
   const offset = 20
   _ui_div = createDiv()
   _ui_div.position(width + _ui_overall_offset, _ui_overall_offset)
-  _ui_div.style('background:white')
+  _ui_div.style('background:#c8c8c8')
   _ui_div.style(`width:${_ui_pt_width}pt`)
   _ui_div.style(`height:${height - _ui_overall_offset * 2}px`)
   _ui_div.style(`padding:${_ui_overall_pt_padding}pt`)
