@@ -59,7 +59,7 @@ let known_genetic_codes = [
     name: "Twirly",
     genes: "a:aab b:aabc c:dd",
     angles: "a:0 b:60 c:120 d:120",
-    d_n_a: "a",
+    d_n_a: "ada",
   },
   {
     name: "Chaos",

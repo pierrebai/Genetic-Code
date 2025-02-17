@@ -38,7 +38,7 @@ class Evolution extends MultiStepsAlgo {
 
   *draw() {
     background(0)
-    stroke(240)
+    stroke(200)
     noFill()
 
     let x = initial_x
