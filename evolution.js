@@ -32,8 +32,9 @@ class Evolution extends MultiStepsAlgo {
       }
       const gene = evolving_genes_stack.pop()
       const generations = generations_stack.pop()
-      if (gene in this.genetic_code) {
-        const new_genes = Array.from(this.genetic_code[gene])
+      const lc_gene = gene.toLowerCase()
+      if (lc_gene in this.genetic_code) {
+        const new_genes = Array.from(this.genetic_code[lc_gene])
         if (generations > 1) {
           // Note: we need to reverse the new genes so that the first gene
           //       is at the back and gets popped first.
@@ -78,19 +79,22 @@ class Evolution extends MultiStepsAlgo {
     let count = 0
 
     for (const gene of draw_queue) {
-      if (++count % 1000 == 0) {
-        endShape()
-        beginShape(LINES)
+      const lc_gene = gene.toLowerCase()
+      if (lc_gene in this.angles)
+        heading = (heading + this.angles[lc_gene]) % 360
+      if (lc_gene == gene) {
+        const rad_heading = heading * Math.PI / 180
+        const new_x = x + Math.cos(rad_heading) * 8
+        const new_y = y + Math.sin(rad_heading) * 8
+        vertex(x, y)
+        vertex(new_x, new_y)
+        x = new_x
+        y = new_y
+        if (++count % 1000 == 0) {
+          endShape()
+          beginShape(LINES)
+        }
       }
-      if (gene in this.angles)
-        heading = (heading + this.angles[gene]) % 360
-      const rad_heading = heading * Math.PI / 180
-      const new_x = x + Math.cos(rad_heading) * 8
-      const new_y = y + Math.sin(rad_heading) * 8
-      vertex(x, y)
-      vertex(new_x, new_y)
-      x = new_x
-      y = new_y
     }
     endShape()
 
