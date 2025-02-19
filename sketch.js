@@ -26,7 +26,7 @@ function _restart() {
 const ui_values = {
   genetic_code: known_genetic_codes,
   evolution: {
-    generations: 10,
+    generations: 11,
     pause: _pause,
     run: _run,
     restart: _restart,

@@ -6,6 +6,36 @@ let known_genetic_codes = [
     d_n_a: "aca",
   },
   {
+    name: "Hilbert Cross",
+    genes: "a:bCb b:aBC",
+    angles: "a:0 b:90 c:180 d:270",
+    d_n_a: "aCa",
+  },
+  {
+    name: "Koch Hexagon",
+    genes: "a:bCb b:ACAC",
+    angles: "a:0 b:120 c:180",
+    d_n_a: "aCaCa",
+  },
+  {
+    name: "Koch Cloud",
+    genes: "a:Cb b:ADADADADA",
+    angles: "a:0 b:120 c:180 d:90 e:270 f:60",
+    d_n_a: "AEAEA",
+  },
+  {
+    name: "Corner Cats",
+    genes: "a:Cb b:ADADA",
+    angles: "a:0 b:120 c:180 d:90 e:270 f:60",
+    d_n_a: "a",
+  },
+  {
+    name: "Spike Z",
+    genes: "a:DbDbC b:DA",
+    angles: "a:0 b:120 c:180",
+    d_n_a: "aBaBa",
+  },
+  {
     name: "Square Wiggle",
     genes: "a:aab b:abd c:c d:bb",
     angles: "a:0 b:90 c:180 d:270",
