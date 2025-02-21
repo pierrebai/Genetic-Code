@@ -34,12 +34,11 @@ const ui_values = {
   }
 }
 
-function _parse_gene_pair(text) {
+function _parse_pair(text) {
   const from_to = text.split(':')
   if (from_to.length != 2)
-    return undefined
+    return [undefined, undefined]
   return from_to
-
 }
 
 function _parse_genes(value) {
@@ -47,9 +46,10 @@ function _parse_genes(value) {
 
   const genes = value.split(' ')
   for (const gene of genes) {
-    const from_to = _parse_gene_pair(gene)
-    if (from_to != undefined)
-      genetic_code[from_to[0]] = from_to[1]
+    const [from, to] = _parse_pair(gene)
+    if (from == undefined)
+      continue
+    genetic_code[from] = to
   }
 
   // console.log('genetic-code:', genetic_code)
@@ -61,22 +61,41 @@ function _parse_angles(value) {
 
   const angle_texts = value.split(' ')
 
-  const genes = 'abcdefghijklmnopqrstuvwxyz'
   for (let i = 0; i < angle_texts.length; ++i) {
-    const from_to = _parse_gene_pair(angle_texts[i])
-    if (from_to != undefined) {
-      const angle = (360 + Number(from_to[1])) % 360
-      angles[from_to[0]] = angle
-    }
+    const [from, angle_text] = _parse_pair(angle_texts[i])
+    if (from == undefined)
+      continue
+    const angle = (360 + Number(angle_text)) % 360
+    angles[from] = angle
   }
 
   // console.log('angles:', angles)
   return angles
 }
 
+function _parse_distances(value) {
+  const distances = {}
+
+  const distance_texts = value.split(' ')
+
+  for (let i = 0; i < distance_texts.length; ++i) {
+    const [from, distance_text] = _parse_pair(distance_texts[i])
+    if (from == undefined)
+      continue
+    const distance = Number.parseFloat(distance_text)
+    if (isNaN(distance))
+      continue
+    distances[from] = distance
+  }
+
+  // console.log('distances:', distances)
+  return distances
+}
+
 let is_paused = false
 let genetic_code = _parse_genes(ui_values.genetic_code[0].genes)
 let angles = _parse_angles(ui_values.genetic_code[0].angles)
+let distances = _parse_distances(ui_values.genetic_code[0].distances)
 let initial_dna = ui_values.genetic_code[0].d_n_a
 let evolution = undefined
 
@@ -85,6 +104,7 @@ const ui_callbacks = {
     genes: function(value) { genetic_code = _parse_genes(value); _restart() },
     d_n_a: function(value) { initial_dna = value; _restart() },
     angles: function(value) { angles = _parse_angles(value); _restart() },
+    distances: function(value) { distances = _parse_distances(value); _restart() },
   },
   evolution: {
     generations: function(value) { ui_values.evolution.generations = value; _restart() },

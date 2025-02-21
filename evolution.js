@@ -5,6 +5,7 @@ class Evolution extends MultiStepsAlgo {
     this.dna = initial_dna ? initial_dna : ''
     this.genetic_code = genetic_code
     this.angles = angles
+    this.distances = distances
 
     this.x = 0
     this.y = 0
@@ -33,6 +34,7 @@ class Evolution extends MultiStepsAlgo {
       const gene = evolving_genes_stack.pop()
       const generations = generations_stack.pop()
       const lc_gene = gene.toLowerCase()
+    
       if (lc_gene in this.genetic_code) {
         const new_genes = Array.from(this.genetic_code[lc_gene])
         if (generations > 1) {
@@ -83,9 +85,10 @@ class Evolution extends MultiStepsAlgo {
       if (lc_gene in this.angles)
         heading = (heading + this.angles[lc_gene]) % 360
       if (lc_gene == gene) {
+        const distance = lc_gene in this.distances ? this.distances[lc_gene] : 1
         const rad_heading = heading * Math.PI / 180
-        const new_x = x + Math.cos(rad_heading) * 8
-        const new_y = y + Math.sin(rad_heading) * 8
+        const new_x = x + Math.cos(rad_heading) * 8 * distance
+        const new_y = y + Math.sin(rad_heading) * 8 * distance
         vertex(x, y)
         vertex(new_x, new_y)
         x = new_x

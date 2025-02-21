@@ -3,6 +3,7 @@ let known_genetic_codes = [
     name: "Square Leaf",
     genes: "a:bcb b:azbc",
     angles: "a:0 b:90 c:180 d:270",
+    distances: "",
     d_n_a: "aca",
   },
   {
@@ -10,6 +11,19 @@ let known_genetic_codes = [
     genes: "a:bCb b:aBC",
     angles: "a:0 b:90 c:180 d:270",
     d_n_a: "aCa",
+  },
+  {
+    name: "Bottled Cross",
+    genes: "a:BCD b:aC c:DA d:d",
+    angles: "a:0 b:90 c:180 d:270",
+    d_n_a: "ABABABAB",
+  },
+  {
+    name: "Full of Stars",
+    genes: "f:FzFCz",
+    angles: "a:0 b:90 c:180 d:270 f:15",
+    distances: "a:1 z:4",
+    d_n_a: "FczzFczzF",
   },
   {
     name: "Koch Hexagon",
