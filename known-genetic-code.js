@@ -26,6 +26,27 @@ let known_genetic_codes = [
     d_n_a: "FczzFczzF",
   },
   {
+    name: "Dragon",
+    genes: "a:Ab b:cADb",
+    angles: "a:0 b:60 c:120 d:180 e:-60 f:-120 g:0",
+    distances: "",
+    d_n_a: "aca",
+  },
+  {
+    name: "Wavy Heart",
+    genes: "a:Ab b:ACDb",
+    angles: "a:0 b:60 c:120 d:180 e:-60 f:-120 g:60",
+    distances: "",
+    d_n_a: "gagagafgagagafgagaga",
+  },
+  {
+    name: "Spiky Heart",
+    genes: "a:Ab b:ACB",
+    angles: "a:0 b:60 c:120 d:180 e:-60 f:-120 g:60",
+    distances: "",
+    d_n_a: "aaa",
+  },
+  {
     name: "Koch Hexagon",
     genes: "a:bCb b:ACAC",
     angles: "a:0 b:120 c:180",
