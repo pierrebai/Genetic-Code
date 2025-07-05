@@ -55,10 +55,12 @@ class Evolution extends MultiStepsAlgo {
         draw_queue.push(gene)
       }
 
-      if (draw_queue.length >= 1000) {
-        this._flush_draw_queue(draw_queue)
-        if (this.stopped)
-          return
+      if (!is_filled) {
+        if (draw_queue.length >= 1000) {
+          this._flush_draw_queue(draw_queue)
+          if (this.stopped)
+            return
+        }
       }
     }
 
@@ -73,11 +75,18 @@ class Evolution extends MultiStepsAlgo {
   }
 
   _draw(draw_queue, heading, x, y) {
-    stroke('white')
-    strokeWeight(get_movement_line_weight())
-    noFill()
+    if (is_filled) {
+      noStroke()
+      fill('white')
+      beginShape()
+    }
+    else {
+      stroke('white')
+      noFill()
+      strokeWeight(get_movement_line_weight())
+      beginShape(LINES)
+    }
 
-    beginShape(LINES)
     let count = 0
 
     for (const gene of draw_queue) {
@@ -93,9 +102,11 @@ class Evolution extends MultiStepsAlgo {
         vertex(new_x, new_y)
         x = new_x
         y = new_y
-        if (++count % 1000 == 0) {
-          endShape()
-          beginShape(LINES)
+        if (!is_filled) {
+          if (++count % 1000 == 0) {
+            endShape()
+            beginShape(LINES)
+          }
         }
       }
     }
@@ -106,15 +117,22 @@ class Evolution extends MultiStepsAlgo {
 
   finished() {
     super.finished()
+    this.draw()
   }
 
   *draw() {
     let x = 0
     let y = 0
     let heading = 0
-    for (let i = 0; i < this.final_genes.length; i += 1000) {
-      [heading, x, y] = this._draw(this.final_genes.slice(i, i + 1000), heading, x, y)
-      yield
+
+    if (is_filled) {
+      this._draw(this.final_genes, heading, x, y)
+    }
+    else {
+      for (let i = 0; i < this.final_genes.length; i += 1000) {
+        [heading, x, y] = this._draw(this.final_genes.slice(i, i + 1000), heading, x, y)
+        yield
+      }
     }
   }
 }

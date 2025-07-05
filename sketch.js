@@ -31,7 +31,10 @@ const ui_values = {
     run: _run,
     restart: _restart,
     recenter: recenter_movement
-  }
+  },
+  draw: {
+    is_filled: false,
+  },
 }
 
 function _parse_pair(text) {
@@ -98,6 +101,7 @@ let angles = _parse_angles(ui_values.genetic_code[0].angles)
 let distances = _parse_distances(ui_values.genetic_code[0].distances)
 let initial_dna = ui_values.genetic_code[0].d_n_a
 let evolution = undefined
+let is_filled = false
 
 const ui_callbacks = {
   genetic_code: {
@@ -108,6 +112,9 @@ const ui_callbacks = {
   },
   evolution: {
     generations: function(value) { ui_values.evolution.generations = value; _restart() },
+  },
+  draw: {
+    is_filled: function(value) { is_filled = value; _restart() },
   }
 }
 

@@ -13,6 +13,12 @@ let known_genetic_codes = [
     d_n_a: "aCa",
   },
   {
+    name: "Nazi Cross",
+    genes: "a:bd b:aBC d:aDC",
+    angles: "a:0 b:90 c:180 d:270",
+    d_n_a: "aCa",
+  },
+  {
     name: "Bottled Cross",
     genes: "a:BCD b:aC c:DA d:d",
     angles: "a:0 b:90 c:180 d:270",
