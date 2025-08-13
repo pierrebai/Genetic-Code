@@ -7,6 +7,13 @@ let known_genetic_codes = [
     d_n_a: "aca",
   },
   {
+    name: "Gangrenous Cross",
+    genes: "a:bcab b:azbc",
+    angles: "a:0 b:90 c:180 d:270",
+    distances: "",
+    d_n_a: "abababab",
+  },
+  {
     name: "Hilbert Cross",
     genes: "a:bCb b:aBC",
     angles: "a:0 b:90 c:180 d:270",
@@ -61,6 +68,12 @@ let known_genetic_codes = [
   {
     name: "Koch Cloud",
     genes: "a:Cb b:ADADADADA",
+    angles: "a:0 b:120 c:180 d:90 e:270 f:60",
+    d_n_a: "AEAEA",
+  },
+  {
+    name: "Spiky Mistletoe",
+    genes: "a:Cb b:ADADADA",
     angles: "a:0 b:120 c:180 d:90 e:270 f:60",
     d_n_a: "AEAEA",
   },
